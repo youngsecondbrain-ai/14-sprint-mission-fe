@@ -1,3 +1,4 @@
+import type { ProductListResponse, ProductUpdateInput } from "../types/product";
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3001";
@@ -26,7 +27,7 @@ function getOptionalAuthorization() {
   };
 }
 
-export async function getProduct(productId) {
+export async function getProduct(productId: string) {
   const response = await axios.get(`${API_BASE_URL}/products/${productId}`, {
     headers: getOptionalAuthorization(),
   });
@@ -34,7 +35,10 @@ export async function getProduct(productId) {
   return response.data;
 }
 
-export async function updateProduct(productId, productData) {
+export async function updateProduct(
+  productId: string,
+  productData: ProductUpdateInput,
+) {
   const response = await axios.patch(
     `${API_BASE_URL}/products/${productId}`,
     productData,
@@ -52,14 +56,17 @@ export async function getProducts({
   orderBy = "recent",
   keyword = "",
 }) {
-  const response = await axios.get(`${API_BASE_URL}/products`, {
-    params: {
-      page,
-      pageSize,
-      orderBy,
-      keyword,
+  const response = await axios.get<ProductListResponse>(
+    `${API_BASE_URL}/products`,
+    {
+      params: {
+        page,
+        pageSize,
+        orderBy,
+        keyword,
+      },
     },
-  });
+  );
 
   return response.data;
 }
@@ -78,7 +85,13 @@ export async function getProductComments({ productId, limit = 10, cursor }) {
   return response.data;
 }
 
-export async function createProductComment({ productId, content }) {
+export async function createProductComment({
+  productId,
+  content,
+}: {
+  productId: string;
+  content: string;
+}) {
   const response = await axios.post(
     `${API_BASE_URL}/products/${productId}/comments`,
     { content },
@@ -88,7 +101,7 @@ export async function createProductComment({ productId, content }) {
   return response.data;
 }
 
-export async function deleteComment(commentId) {
+export async function deleteComment(commentId: number) {
   const response = await axios.delete(`${API_BASE_URL}/comments/${commentId}`, {
     headers: getAuthorization(),
   });
@@ -96,7 +109,13 @@ export async function deleteComment(commentId) {
   return response.data;
 }
 
-export async function updateComment({ commentId, content }) {
+export async function updateComment({
+  commentId,
+  content,
+}: {
+  commentId: number;
+  content: string;
+}) {
   const response = await axios.patch(
     `${API_BASE_URL}/comments/${commentId}`,
     {
@@ -110,7 +129,7 @@ export async function updateComment({ commentId, content }) {
   return response.data;
 }
 
-export async function favoriteProduct(productId) {
+export async function favoriteProduct(productId: string) {
   const response = await axios.post(
     `${API_BASE_URL}/products/${productId}/likes`,
     null,
@@ -122,7 +141,7 @@ export async function favoriteProduct(productId) {
   return response.data;
 }
 
-export async function unfavoriteProduct(productId) {
+export async function unfavoriteProduct(productId: string) {
   const response = await axios.delete(
     `${API_BASE_URL}/products/${productId}/likes`,
     {
@@ -133,7 +152,7 @@ export async function unfavoriteProduct(productId) {
   return response.data;
 }
 
-export async function deleteProduct(productId) {
+export async function deleteProduct(productId: string) {
   const response = await axios.delete(`${API_BASE_URL}/products/${productId}`, {
     headers: getAuthorization(),
   });

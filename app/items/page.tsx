@@ -5,6 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { getProducts } from "../../lib/api/products";
 import ItemCard from "./_components/ItemCard";
+import type { SubmitEvent } from "react";
+import type { ProductListResponse } from "@/lib/types/product";
+
+type ProductOrder = "recent" | "favorite";
 
 const PAGE_SIZE = 10;
 
@@ -12,11 +16,11 @@ export default function ItemsPage() {
   const [searchInput, setSearchInput] = useState("");
   const [keyword, setKeyword] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [orderBy, setOrderBy] = useState("recent");
+  const [orderBy, setOrderBy] = useState<ProductOrder>("recent");
   const [page, setPage] = useState(1);
 
   // 판매 중인 상품 목록
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, isError } = useQuery<ProductListResponse>({
     queryKey: ["products", page, orderBy, keyword],
     queryFn: () =>
       getProducts({
@@ -32,7 +36,7 @@ export default function ItemsPage() {
     data: bestData,
     isPending: isBestPending,
     isError: isBestError,
-  } = useQuery({
+  } = useQuery<ProductListResponse>({
     queryKey: ["products", "best"],
     queryFn: () =>
       getProducts({
@@ -57,14 +61,14 @@ export default function ItemsPage() {
     return <main>상품 목록을 불러오지 못했습니다.</main>;
   }
 
-  function handleSearch(event) {
+  function handleSearch(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setKeyword(searchInput.trim());
     setPage(1);
   }
 
-  function handleOrderChange(nextOrderBy) {
+  function handleOrderChange(nextOrderBy: ProductOrder) {
     setOrderBy(nextOrderBy);
     setPage(1);
     setIsOpen(false);
@@ -85,6 +89,7 @@ export default function ItemsPage() {
             <ItemCard
               type="best"
               key={item.id}
+              id={item.id}
               images={item.images}
               name={item.name}
               price={item.price}
@@ -143,6 +148,7 @@ export default function ItemsPage() {
           <ItemCard
             type="general"
             key={item.id}
+            id={item.id}
             images={item.images}
             name={item.name}
             price={item.price}

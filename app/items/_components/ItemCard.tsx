@@ -1,9 +1,21 @@
 import Link from "next/link";
+import type { ProductListItem } from "@/lib/types/product";
 
 const heartIcon = "/images/ic_heart.png";
 const API_BASE_URL = "http://localhost:3001";
 
-function ItemCard({ id, type, images, name, price, favoriteCount }) {
+type ItemCardProps = ProductListItem & {
+  type: "best" | "general";
+};
+
+function ItemCard({
+  id,
+  type,
+  images,
+  name,
+  price,
+  favoriteCount,
+}: ItemCardProps) {
   const imagePath = images?.[0];
   const imageUrl = imagePath ? `${API_BASE_URL}${imagePath}` : null;
 
